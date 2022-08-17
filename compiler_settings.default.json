@@ -1,0 +1,16 @@
+{
+    "default": {
+        "source_path": "D:\\Program Files (x86)\\GOG Galaxy\\Games\\Unreal Backup",
+        "out_dir": "D:\\Program Files (x86)\\GOG Galaxy\\Games\\Unreal Gold",
+        "preproc_definitions": {
+            "vanilla":1, "singleplayer":1, "flags": 0, "prefix":"",
+            "Mover":"Mover", "PlayerPawn":"UnrealIPlayer", "flagvarprefix": "", "package": "URando"
+        },
+        "mods_paths": [ "./" ],
+        "packages": [ "URando" ],
+        "verbose": false,
+        "run_tests": false,
+        "copy_if_changed": "URVersion.uc",
+        "blacklist": []
+    }
+}

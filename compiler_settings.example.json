@@ -1,0 +1,7 @@
+{
+    "default": {
+        "source_path": "D:\\Program Files (x86)\\GOG Galaxy\\Games\\Unreal Backup",
+        "out_dir": "D:\\Program Files (x86)\\GOG Galaxy\\Games\\Unreal Gold",
+        "mods_paths": [ "./" ]
+    }
+}
