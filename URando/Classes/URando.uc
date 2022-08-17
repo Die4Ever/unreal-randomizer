@@ -1,9 +1,8 @@
 class URando extends URInfo;
 
-var #var(PlayerPawn) Player;
+var #var(PlayerPawn) MainPlayer;
 var string localURL;
-var int newseed;
-var int seed;
+var int seed, tseed;
 
 var private int CrcTable[256]; // for string hashing to do more stable seeding
 var URBase modules[32];
@@ -21,11 +20,24 @@ function Init()
     }
     l(self$".Init(), localURL: "$localURL);
     CrcInit();
-    SetSeed(Rand(999999));
-    //Enable('Tick');
-    //bTickEnabled = true;
-    LoadModules();
-    RandoFirstEntry();
+    Enable('Tick');
+    bTickEnabled = true;
+}
+
+function InitDataStorage()
+{
+    local URDataStorage ds;
+    local PlayerPawn p;
+    p = GetPlayerPawn();
+    ds = URDataStorage(p.FindInventoryType(class'URDataStorage'));
+    if(ds == None) {
+        ds = spawn(class'URDataStorage');
+        l("spawned "$ds);
+        p.AddInventory(ds);
+        ds.seed = Rand(999999);
+    }
+    seed = ds.seed;
+    SetSeed(ds.seed);
 }
 
 function URBase LoadModule(class<URBase> moduleclass)
@@ -57,9 +69,23 @@ function LoadModules()
     LoadModule(class'URSwapItems');
 }
 
+event Tick( float Delta )
+{
+    MainPlayer = #var(PlayerPawn)(GetPlayerPawn());
+    if(MainPlayer == None) return;
+
+    InitDataStorage();
+    LoadModules();
+    RandoFirstEntry();
+    LoginActivePlayers();
+    Disable('Tick');
+    bTickEnabled = false;
+}
+
 function RandoFirstEntry()
 {
     local int i;
+    l("RandoFirstEntry(), seed: "$seed);
     for(i=0;i<num_modules;i++) {
         modules[i].PreFirstEntry();
     }
@@ -71,9 +97,19 @@ function RandoFirstEntry()
     }
 }
 
+function LoginActivePlayers()
+{
+    local #var(PlayerPawn) p;
+
+    foreach AllActors(class'#var(PlayerPawn)', p) {
+        PlayerLogin(p);
+    }
+}
+
 function RandoAnyEntry()
 {
     local int i;
+    l("RandoAnyEntry(), seed: "$seed);
     for(i=0;i<num_modules;i++) {
         modules[i].AnyEntry();
     }
@@ -82,6 +118,8 @@ function RandoAnyEntry()
 function PlayerLogin(#var(PlayerPawn) p)
 {
     local int i;
+    if(bTickEnabled) return;
+    l("PlayerLogin("$p$"), seed: "$seed);
     for(i=0;i<num_modules;i++) {
         modules[i].PlayerLogin(p);
     }
@@ -90,20 +128,19 @@ function PlayerLogin(#var(PlayerPawn) p)
 simulated final function int SetSeed(int s)
 {
     local int oldseed;
-    oldseed = newseed;
-    //log("SetSeed old seed == "$newseed$", new seed == "$s);
-    newseed = s;
-    return oldseed;
+    oldseed = tseed;
+    l("SetSeed global seed: "$seed$", old tseed: "$oldseed$", new tseed: "$s);
+    if(s == 0) s++;
+    tseed = s;
+    return tseed;
 }
 
 simulated final function int rng(int max)
 {
-    local int gen1, gen2;
-    gen2 = 2147483643;
-    gen1 = gen2/2;
-    newseed = gen1 * newseed * 5 + gen2 + (newseed/5) * 3;
-    newseed = abs(newseed);
-    return (newseed >>> 8) % max;
+    tseed = tseed ^ (tseed >> 13);
+    tseed = tseed ^ (tseed << 21);
+    tseed = tseed ^ (tseed >> 11);
+    return ((tseed * 0xDEADBF03) & 0x7FFFFFFF) % max;
 }
 
 

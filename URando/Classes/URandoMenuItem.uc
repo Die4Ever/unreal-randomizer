@@ -8,7 +8,7 @@ function Setup()
 
 function Execute()
 {
-    local Menu ChildMenu;
+    //local Menu ChildMenu;
     local PlayerPawn p;
     local string map;
 

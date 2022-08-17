@@ -25,10 +25,10 @@ simulated final function #var(PlayerPawn) player(optional bool quiet)
     local URando ur;
     ur = GetUR();
     //p = #var(PlayerPawn)(GetPlayerPawn());
-    p = ur.Player;
+    p = ur.MainPlayer;
     if( p == None ) {
         p = #var(PlayerPawn)(GetPlayerPawn());
-        ur.Player = p;
+        ur.MainPlayer = p;
     }
     if( p == None && !quiet ) warning("player() found None");
     return p;
@@ -93,7 +93,7 @@ simulated function err(coerce string message, optional bool skip_player_message)
 
 static function int _SystemTime(LevelInfo Level)
 {
-    local int time, m;
+    local int time;
     time = Level.Second + (Level.Minute*60) + (Level.Hour*3600) + (Level.Day*86400);
 
     switch(Level.Month) {

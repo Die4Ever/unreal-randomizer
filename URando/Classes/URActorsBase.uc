@@ -5,7 +5,7 @@ var class<Actor> _skipactor_types[6];
 function SwapAll(class<Actor> c, float percent_chance)
 {
     local Actor temp[4096];
-    local Actor a, b;
+    local Actor a;
     local int num, i, slot;
 
     SetSeed( "SwapAll " $ c.name );
