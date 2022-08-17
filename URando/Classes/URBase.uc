@@ -55,7 +55,7 @@ simulated function int rng(int max)
 
 simulated function bool rngb()
 {
-    return ur.rng(101) > 50;
+    return ur.rng(100) < 50;
 }
 
 simulated function float rngf()

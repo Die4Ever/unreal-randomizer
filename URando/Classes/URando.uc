@@ -137,10 +137,12 @@ simulated final function int SetSeed(int s)
 
 simulated final function int rng(int max)
 {
-    tseed = tseed ^ (tseed >> 13);
-    tseed = tseed ^ (tseed << 21);
-    tseed = tseed ^ (tseed >> 11);
-    return ((tseed * 0xDEADBF03) & 0x7FFFFFFF) % max;
+    const gen1 = 1073741821;// half of gen2, rounded down
+    const gen2 = 2147483643;
+    tseed = gen1 * tseed * 5 + gen2 + (tseed/5) * 3;
+    // in unrealscript >>> is right shift and filling the left with 0s, >> shifts but keeps the sign
+    // this means we don't need abs, which is a float function anyways
+    return (tseed >>> 8) % max;
 }
 
 
