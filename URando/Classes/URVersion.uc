@@ -3,7 +3,7 @@ class URVersion extends Info;
 simulated static function CurrentVersion(optional out int major, optional out int minor, optional out int patch, optional out int build)
 {
     major=0;
-    minor=2;
+    minor=3;
     patch=0;
     build=0;//build can't be higher than 99
 }
