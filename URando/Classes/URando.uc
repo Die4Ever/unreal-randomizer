@@ -30,12 +30,6 @@ function InitDataStorage()
     local PlayerPawn p;
     p = GetPlayerPawn();
     ds = URDataStorage(p.FindInventoryType(class'URDataStorage'));
-    if(ds == None) {
-        ds = spawn(class'URDataStorage');
-        l("spawned "$ds);
-        p.AddInventory(ds);
-        ds.seed = Rand(999999);
-    }
     seed = ds.seed;
     SetSeed(ds.seed);
 }
@@ -77,9 +71,10 @@ event Tick( float Delta )
     InitDataStorage();
     LoadModules();
     RandoFirstEntry();
-    LoginActivePlayers();
     Disable('Tick');
     bTickEnabled = false;
+    LoginActivePlayers();
+    RandoAnyEntry();
 }
 
 function RandoFirstEntry()
@@ -109,6 +104,7 @@ function LoginActivePlayers()
 function RandoAnyEntry()
 {
     local int i;
+    if(bTickEnabled) return;
     l("RandoAnyEntry(), seed: "$seed);
     for(i=0;i<num_modules;i++) {
         modules[i].AnyEntry();
